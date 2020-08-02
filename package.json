@@ -1,0 +1,21 @@
+{
+  "name": "rubiks-engine",
+  "version": "1.0.0",
+  "description": "A set of tools for working with Rubik's Cube-type puzzles",
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "lodash-es": "^4.17.15",
+    "lodash-permute": "^1.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "Kevin Roche",
+  "license": "ISC"
+}
