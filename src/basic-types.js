@@ -40,9 +40,10 @@ class MoveFactory {
     }
     
     getMoveFunction(move) {
+        let $this = this;
         return function(state, saveCurrentState) {
             let newState = saveCurrentState ? cloneDeep(state) : state;
-            let rosterNotation = toRosterNotation(move.permutation, state.cubies.length);
+            let rosterNotation = $this.toRosterNotation(move.permutation, state.cubies.length);
             newState.cubies = permute(newState.cubies, rosterNotation);
             newState.cubies.forEach((c, i) => c.orientation = (c.orientation + move.rotation[i]) % c.symmetry);
             return newState;
