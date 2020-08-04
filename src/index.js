@@ -1,7 +1,5 @@
-import { Cubie, State, Cube, MoveFactory } from "./basic-types.js";
-import { cubies, moves, Renderer } from "./3x3-data.js";
-
-const renderer = new Renderer();
+import { State, MoveFactory } from "./basic-types.js";
+import { cubies, moves, renderer } from "./3x3cubix-data.js";
 
 let state = new State(cubies);
 

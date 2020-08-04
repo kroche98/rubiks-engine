@@ -1,50 +1,10 @@
-import { Cubie } from "./basic-types.js";
-import { imageLookup } from "./3x3-graphics.js";
-
 const CubieType = {
     CORNER: 0,
     EDGE: 1,
     CENTER: 2
 }
 
-let cornerCubies = [
-    new Cubie(CubieType.CORNER, 'ufl', 0, 3),
-    new Cubie(CubieType.CORNER, 'ulb', 0, 3),
-    new Cubie(CubieType.CORNER, 'ubr', 0, 3),
-    new Cubie(CubieType.CORNER, 'urf', 0, 3),
-    new Cubie(CubieType.CORNER, 'dfr', 0, 3),
-    new Cubie(CubieType.CORNER, 'drb', 0, 3),
-    new Cubie(CubieType.CORNER, 'dbl', 0, 3),
-    new Cubie(CubieType.CORNER, 'dlf', 0, 3),
-];
-
-let edgeCubies = [
-    new Cubie(CubieType.EDGE, 'ul', 0, 2),
-    new Cubie(CubieType.EDGE, 'ub', 0, 2),
-    new Cubie(CubieType.EDGE, 'ur', 0, 2),
-    new Cubie(CubieType.EDGE, 'uf', 0, 2),
-    new Cubie(CubieType.EDGE, 'fr', 0, 2),
-    new Cubie(CubieType.EDGE, 'df', 0, 2),
-    new Cubie(CubieType.EDGE, 'fl', 0, 2),
-    new Cubie(CubieType.EDGE, 'dl', 0, 2),
-    new Cubie(CubieType.EDGE, 'bl', 0, 2),
-    new Cubie(CubieType.EDGE, 'db', 0, 2),
-    new Cubie(CubieType.EDGE, 'br', 0, 2),
-    new Cubie(CubieType.EDGE, 'dr', 0, 2),
-];
-
-let centerCubies = [
-    new Cubie(CubieType.CENTER, 'u', 0, 1),
-    new Cubie(CubieType.CENTER, 'f', 0, 1),
-    new Cubie(CubieType.CENTER, 'l', 0, 1),
-    new Cubie(CubieType.CENTER, 'b', 0, 1),
-    new Cubie(CubieType.CENTER, 'r', 0, 1),
-    new Cubie(CubieType.CENTER, 'd', 0, 1)
-];
-
-let cubies = [...cornerCubies, ...edgeCubies, ...centerCubies];
-
-let moves = {
+const moves = {
     L: {
         permutation: [[0, 7, 6, 1], [8, 14, 15, 16]],
         rotation: [2, 1, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
@@ -101,23 +61,13 @@ const coordsToCubicle = {
     '2,2,2': 3
 };
 
-const imageTitles = [
-    'wbr', 'brw', 'rwb', 'wob', 'obw', 'bwo', 'wgo', 'gow', 'owg', 'wrg', 'rgw', 'gwr',
-    'ygr', 'gry', 'ryg', 'yog', 'ogy', 'gyo', 'ybo', 'boy', 'oyb', 'yrb', 'rby', 'byr',
-    'wrk', 'rkw', 'kwr', 'krw', 'rwk', 'wkr', 'wbk', 'bkw', 'kwb', 'kbw', 'bwk', 'wkb',
-    'wok', 'okw', 'kwo', 'kow', 'owk', 'wko', 'wgk', 'gkw', 'kwg', 'kgw', 'gwk', 'wkg',
-    'yrk', 'rky', 'kyr', 'kry', 'ryk', 'ykr', 'ygk', 'gky', 'kyg', 'kgy', 'gyk', 'ykg',
-    'yok', 'oky', 'kyo', 'koy', 'oyk', 'yko', 'ybk', 'bky', 'kyb', 'kby', 'byk', 'ykb',
-    'rbk', 'bkr', 'krb', 'kbr', 'brk', 'rkb', 'rgk', 'gkr', 'krg', 'kgr', 'grk', 'rkg',
-    'obk', 'bko', 'kob', 'kbo', 'bok', 'okb', 'ogk', 'gko', 'kog', 'kgo', 'gok', 'okg',
-    'wkk', 'kkw', 'kwk', 'ykk', 'kky', 'kyk', 'okk', 'kko', 'kok', 'rkk', 'kkr', 'krk',
-    'bkk', 'kkb', 'kbk', 'gkk', 'kkg', 'kgk'
-];
-
 class Renderer {
-    constructor() {
+    constructor(imageDirectory, imageTitles, imageLookup) {
+        this.imageDirectory = imageDirectory;
+        this.imageTitles = imageTitles;
+        this.imageLookup = imageLookup;
         this.images = {};
-        this.imageCount = imageTitles.length;
+        this.imageCount = this.imageTitles.length;
         this.imagesLoadedCount = 0;
         this.ready = false;
         this.loadImages();
@@ -131,10 +81,10 @@ class Renderer {
     }
 
     loadImages() {
-        for (let title of imageTitles) {
+        for (let title of this.imageTitles) {
             let img = new Image();
             img.onload = () => this.imageOnLoad();
-            img.src = `graphics/3x3/${title}.svg`;
+            img.src = `${this.imageDirectory}/${title}.svg`;
             this.images[title] = img;
         }
     }
@@ -144,14 +94,16 @@ class Renderer {
         const Y_WIDTH = 72;
         const Z_WIDTH = 36;
         const IMG_WIDTH = 110;
-    
+
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
         for (let y = 0; y < 3; y++) {
             for (let z = 0; z < 3; z++) {
                 for (let x = 0; x < 3; x++) {
                     if (x === 2 || y === 2 || z === 2) {
                         const cubicle = coordsToCubicle[[x, y, z]];
                         const cubie = state.cubies[cubicle];
-                        const imageTitle = imageLookup[cubie.name][cubicle][cubie.orientation];
+                        const imageTitle = this.imageLookup[cubie.name][cubicle][cubie.orientation];
                         const image = this.images[imageTitle];
                         const xCoord = Z_WIDTH * (2 - z) + X_WIDTH * x
                         const yCoord = Z_WIDTH * (4 + z) - Y_WIDTH * y
@@ -163,4 +115,4 @@ class Renderer {
     }
 }
 
-export { cubies, moves, Renderer };
+export { CubieType, moves, coordsToCubicle, Renderer };
