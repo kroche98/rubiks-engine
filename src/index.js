@@ -1,5 +1,5 @@
 import { State, MoveFactory } from "./basic-types.js";
-import { cubies, moves, renderer } from "./3x3rubiks-data.js";
+import { cubies, moves, renderer } from "./2x2rubiks-data.js";
 
 let state = new State(cubies);
 
