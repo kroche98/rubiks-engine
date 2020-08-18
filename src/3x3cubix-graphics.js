@@ -139,7 +139,7 @@ const imageLookup = {
             1: 'y-bd'
         },
         11: {
-            0: 'y-fb',
+            0: 'y-lb',
             1: 'y-rd'
         },
         12: {
