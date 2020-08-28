@@ -1,8 +1,9 @@
-import { Cubie } from "./basic-types.js";
-import { imageLookup } from "./3x3cubix-graphics.js";
-import { CubieType, moves, Renderer } from "./3x3-data.js";
+import { Cubie, State, Puzzle } from "../basic-types.js";
+import { BasicCubeRenderer } from "../basic-cube-renderer.js";
+import { CubieType, moves, coordsToCubicle } from "../3x3-data.js";
+import { imageLookup } from "../3x3cubix-graphics.js";
 
-const cornerCubies = [
+const cubies = [
     new Cubie(CubieType.CORNER, 'k', 0, 3),
     new Cubie(CubieType.CORNER, 'k', 0, 3),
     new Cubie(CubieType.CORNER, 'k', 0, 3),
@@ -11,9 +12,6 @@ const cornerCubies = [
     new Cubie(CubieType.CORNER, 'n', 1, 3),
     new Cubie(CubieType.CORNER, 'm', 0, 3),
     new Cubie(CubieType.CORNER, 'm', 1, 3),
-];
-
-const edgeCubies = [
     new Cubie(CubieType.EDGE, 'a', 0, 1),
     new Cubie(CubieType.EDGE, 'a', 0, 1),
     new Cubie(CubieType.EDGE, 'a', 0, 1),
@@ -26,9 +24,6 @@ const edgeCubies = [
     new Cubie(CubieType.EDGE, 'e', 0, 1),
     new Cubie(CubieType.EDGE, 'c', 0, 1),
     new Cubie(CubieType.EDGE, 'f', 0, 2),
-];
-
-const centerCubies = [
     new Cubie(CubieType.CENTER, 'w', 0, 1),
     new Cubie(CubieType.CENTER, 'y', 0, 4),
     new Cubie(CubieType.CENTER, 'x', 0, 2),
@@ -36,8 +31,6 @@ const centerCubies = [
     new Cubie(CubieType.CENTER, 'x', 0, 2),
     new Cubie(CubieType.CENTER, 'z', 0, 2)
 ];
-
-const cubies = [...cornerCubies, ...edgeCubies, ...centerCubies];
 
 const imageTitles = [
     'b-bd', 'b-br', 'b-fb', 'b-fd', 'b-fl', 'b-fr', 'b-lb',
@@ -52,6 +45,24 @@ const imageTitles = [
 ];
 
 const imageDirectory = 'graphics/cubix';
-const renderer = new Renderer(imageDirectory, imageTitles, imageLookup);
 
-export { cubies, moves, renderer };
+const renderer = new BasicCubeRenderer(3, 3, 3, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
+
+const solvedState = new State(cubies);
+
+class Puzzle3x3Cubix extends Puzzle {
+    constructor(state) {
+        super(moves, renderer, solvedState, state);
+    }
+
+    scramble() {
+        // TODO: rewrite this
+        const movesArray = Object.keys(this.moveFunctions);
+        for (let i = 0; i < 1000; i++) {
+            const randomMove = movesArray[Math.floor(Math.random()*movesArray.length)];
+            this.applyMove(randomMove);
+        }
+    }
+}
+
+export { Puzzle3x3Cubix }

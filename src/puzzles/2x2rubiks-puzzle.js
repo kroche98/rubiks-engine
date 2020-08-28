@@ -1,6 +1,7 @@
-import { Cubie } from "./basic-types.js";
-import { imageLookup } from "./2x2rubiks-graphics.js";
-import { CubieType, moves, Renderer } from "./2x2-data.js";
+import { Cubie, State, Puzzle } from "../basic-types.js";
+import { BasicCubeRenderer } from "../basic-cube-renderer.js";
+import { CubieType, moves, coordsToCubicle } from "../2x2-data.js";
+import { imageLookup } from "../2x2rubiks-graphics.js";
 
 const cubies = [
     new Cubie(CubieType.CORNER, 'ufl', 0, 3),
@@ -26,7 +27,25 @@ const imageTitles = [
     'bkk', 'kkb', 'kbk', 'gkk', 'kkg', 'kgk'
 ];
 
-const imageDirectory = 'graphics/3x3';
-const renderer = new Renderer(imageDirectory, imageTitles, imageLookup);
+const imageDirectory = 'graphics/rubiks';
 
-export { cubies, moves, renderer };
+const renderer = new BasicCubeRenderer(2, 2, 2, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
+
+const solvedState = new State(cubies);
+
+class Puzzle2x2Rubiks extends Puzzle {
+    constructor(state) {
+        super(moves, renderer, solvedState, state);
+    }
+
+    scramble() {
+        // TODO: rewrite this
+        const movesArray = Object.keys(this.moveFunctions);
+        for (let i = 0; i < 1000; i++) {
+            const randomMove = movesArray[Math.floor(Math.random()*movesArray.length)];
+            this.applyMove(randomMove);
+        }
+    }
+}
+
+export { Puzzle2x2Rubiks }

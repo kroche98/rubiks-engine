@@ -1,8 +1,9 @@
-import { Cubie } from "./basic-types.js";
-import { imageLookup } from "./3x3rubiks-graphics.js";
-import { CubieType, moves, Renderer } from "./3x3-data.js";
+import { Cubie, State, Puzzle } from "../basic-types.js";
+import { BasicCubeRenderer } from "../basic-cube-renderer.js";
+import { CubieType, moves, coordsToCubicle } from "../3x3-data.js";
+import { imageLookup } from "../3x3rubiks-graphics.js";
 
-const cornerCubies = [
+const cubies = [
     new Cubie(CubieType.CORNER, 'ufl', 0, 3),
     new Cubie(CubieType.CORNER, 'ulb', 0, 3),
     new Cubie(CubieType.CORNER, 'ubr', 0, 3),
@@ -11,9 +12,6 @@ const cornerCubies = [
     new Cubie(CubieType.CORNER, 'drb', 0, 3),
     new Cubie(CubieType.CORNER, 'dbl', 0, 3),
     new Cubie(CubieType.CORNER, 'dlf', 0, 3),
-];
-
-const edgeCubies = [
     new Cubie(CubieType.EDGE, 'ul', 0, 2),
     new Cubie(CubieType.EDGE, 'ub', 0, 2),
     new Cubie(CubieType.EDGE, 'ur', 0, 2),
@@ -26,9 +24,6 @@ const edgeCubies = [
     new Cubie(CubieType.EDGE, 'db', 0, 2),
     new Cubie(CubieType.EDGE, 'br', 0, 2),
     new Cubie(CubieType.EDGE, 'dr', 0, 2),
-];
-
-const centerCubies = [
     new Cubie(CubieType.CENTER, 'u', 0, 1),
     new Cubie(CubieType.CENTER, 'f', 0, 1),
     new Cubie(CubieType.CENTER, 'l', 0, 1),
@@ -36,8 +31,6 @@ const centerCubies = [
     new Cubie(CubieType.CENTER, 'r', 0, 1),
     new Cubie(CubieType.CENTER, 'd', 0, 1)
 ];
-
-const cubies = [...cornerCubies, ...edgeCubies, ...centerCubies];
 
 const imageTitles = [
     'wbr', 'brw', 'rwb', 'wob', 'obw', 'bwo', 'wgo', 'gow', 'owg', 'wrg', 'rgw', 'gwr',
@@ -52,7 +45,25 @@ const imageTitles = [
     'bkk', 'kkb', 'kbk', 'gkk', 'kkg', 'kgk'
 ];
 
-const imageDirectory = 'graphics/3x3';
-const renderer = new Renderer(imageDirectory, imageTitles, imageLookup);
+const imageDirectory = 'graphics/rubiks';
 
-export { cubies, moves, renderer };
+const renderer = new BasicCubeRenderer(3, 3, 3, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
+
+const solvedState = new State(cubies);
+
+class Puzzle3x3Rubiks extends Puzzle {
+    constructor(state) {
+        super(moves, renderer, solvedState, state);
+    }
+
+    scramble() {
+        // TODO: rewrite this
+        const movesArray = Object.keys(this.moveFunctions);
+        for (let i = 0; i < 1000; i++) {
+            const randomMove = movesArray[Math.floor(Math.random()*movesArray.length)];
+            this.applyMove(randomMove);
+        }
+    }
+}
+
+export { Puzzle3x3Rubiks }
