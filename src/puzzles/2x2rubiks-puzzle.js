@@ -46,6 +46,15 @@ class Puzzle2x2Rubiks extends Puzzle {
             this.applyMove(randomMove);
         }
     }
+
+    solve(callback) {
+        const worker = new Worker("./worker.js");
+        worker.onmessage = function (e) {
+            worker.terminate();
+            callback(e.data);
+        };
+        worker.postMessage({ leftState: this.state, rightState: this.solvedState, moves: moves });
+    }
 }
 
 export { Puzzle2x2Rubiks }

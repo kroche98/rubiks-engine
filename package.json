@@ -9,12 +9,15 @@
     "lodash-permute": "^1.0.0"
   },
   "devDependencies": {
+    "http-server": "^0.12.3",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "serve": "npx http-server ./dist -s",
+    "rebuild": "npm run build && npm run serve"
   },
   "author": "Kevin Roche",
   "license": "ISC"
