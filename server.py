@@ -16,4 +16,7 @@ socketserver.TCPServer.allow_reuse_address = True
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
     httpd.allow_reuse_address = True
     print("serving at port", PORT)
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        raise SystemExit(0)
