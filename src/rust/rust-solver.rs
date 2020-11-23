@@ -1,4 +1,16 @@
+mod utils;
+
+use wasm_bindgen::prelude::*;
+
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+// allocator.
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+
 use std::collections::HashMap;
+
 
 // bit-shifting equivalent of L move
 macro_rules! move_L {
@@ -335,7 +347,7 @@ fn compute_reachable_states(current_states: &HashMap<u64, u64>) -> HashMap<u64, 
 
 
 // return an array with the moves needed to transform the cube from starting_state to solved_state
-fn solve(starting_state: u64, solved_state: u64) -> [u8; 11] {
+fn compute_solution(starting_state: u64, solved_state: u64) -> Vec<u8> {
     /* we are using a meet-in-the-middle approach
      * so we work from starting_state (left_reached_states) and solved_state (right_reached_states)
      * until we find some state reachable from both the left and right (middle_state)
@@ -392,32 +404,25 @@ fn solve(starting_state: u64, solved_state: u64) -> [u8; 11] {
     let mut left_seq = *left_reached_states.get(&middle_state).unwrap();
     let mut right_seq = *right_reached_states.get(&middle_state).unwrap();
 
-    // for a 2x2 cube, the maximum number of face turns in a solution is 11
-    let mut solution_seq: [u8; 11] = [0; 11];
-    let mut i: usize = 0;
+    let mut solution_seq: Vec<u8> = Vec::new();
 
-    // unpack the sequence from the left to the middle
+    // unpack the sequence from the left state to the middle state
     // since we are unpacking from the right end, we are getting the moves in reverse order
-    // so we first unpack it into a temporary vector
-    let mut temp_seq = Vec::new();
+    // so we insert each new move at the beginning of the solution sequence
     while left_seq != 0 {
         let next_move = (left_seq & 0b11111) as u8;
-        temp_seq.push(next_move);
+        solution_seq.insert(0, next_move);
         left_seq >>= 5;
     }
-    while temp_seq.len() > 0 {
-        let next_move = temp_seq.pop().unwrap();
-        solution_seq[i] = next_move;
-        i += 1;
-    }
 
-    // now we unpack the sequence from the right to the middle
-    // we have to take the inverses of the moves
+    // now we unpack the sequence from the right state to the middle state
+    // we are unpacking from the right end, but we have to reverse the order of the moves
+    // so we push each new move to the end of the solution sequence
+    // we also have to take the inverses of the moves
     while right_seq != 0 {
         let next_move = (right_seq & 0b11111) as u8;
-        solution_seq[i] = move_inverse(next_move);
+        solution_seq.push(move_inverse(next_move));
         right_seq >>= 5;
-        i += 1;
     }
 
     // and we're done!
@@ -425,14 +430,17 @@ fn solve(starting_state: u64, solved_state: u64) -> [u8; 11] {
 }
 
 
-// test driver program
-fn main() {
-    let solved_state: u64 = 0b00000_00001_00010_00011_00100_00101_00110_00111;
+#[wasm_bindgen]
+pub fn solve(starting_state: &[u8], solved_state: &[u8]) -> Box<[u8]>{
+    let mut starting_state_array: [u8; 16] = [0; 16];
+    starting_state_array.copy_from_slice(starting_state);
+    let mut solved_state_array: [u8; 16] = [0; 16];
+    solved_state_array.copy_from_slice(solved_state);
 
-    let starting_state: [u8; 16] = [5, 2, 1, 2, 4, 0, 7, 1, 2, 1, 0, 0, 6, 0, 3, 0];
-    let mut starting_state = bit_repr_from_array(&starting_state);
-
-    let solution_seq = solve(starting_state, solved_state);
-
-    println!("{:?}", solution_seq);
+    let solution = compute_solution(
+        bit_repr_from_array(&starting_state_array),
+        bit_repr_from_array(&solved_state_array)
+    );
+    
+    return solution.into_boxed_slice();
 }
