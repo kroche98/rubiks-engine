@@ -2,7 +2,7 @@ import { Puzzle3x3Rubiks } from "./puzzles/3x3rubiks-puzzle.js";
 import { Puzzle2x2Rubiks } from "./puzzles/2x2rubiks-puzzle.js";
 import { Puzzle3x3Cubix } from "./puzzles/3x3cubix-puzzle.js";
 
-let puzzle = new Puzzle2x2Rubiks();
+let puzzle = new Puzzle3x3Rubiks();
 
 const ctx = document.getElementById('canvas').getContext('2d');
 

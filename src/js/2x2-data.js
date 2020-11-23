@@ -63,6 +63,36 @@ const moves = {
         rotation: [0, 0, 0, 0, 0, 0, 0, 0],
         inverse: "D"
     },
+    L2: {
+        permutation: [[0, 6], [7, 1]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "L2"
+    },
+    R2: {
+        permutation: [[2, 4], [5, 3]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "R2"
+    },
+    F2: {
+        permutation: [[0, 4], [3, 7]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "F2"
+    },
+    B2: {
+        permutation: [[1, 5], [6, 2]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "B2"
+    },
+    U2: {
+        permutation: [[0, 2], [1, 3]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "U2"
+    },
+    D2: {
+        permutation: [[4, 6], [5, 7]],
+        rotation: [0, 0, 0, 0, 0, 0, 0, 0],
+        inverse: "D2"
+    },
 }
 
 const coordsToCubicle = {
