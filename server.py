@@ -7,6 +7,8 @@ PORT = 8080
 Handler = http.server.SimpleHTTPRequestHandler
 Handler.extensions_map.update({
     '.wasm': 'application/wasm',
+    '.js': 'application/javascript',
+    '.svg': 'image/svg+xml'
 })
 
 dist_dir = os.path.join(os.path.dirname(__file__), 'dist')
