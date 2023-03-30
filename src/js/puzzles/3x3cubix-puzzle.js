@@ -44,13 +44,15 @@ const imageTitles = [
     'y-ur', 'y-xb', 'y-xd', 'y-xf', 'y-xl', 'y-xr', 'y-xu'
 ];
 
-const imageDirectory = 'graphics/cubix';
+const imageDirectory = process.env.CUBIX_IMG_DIRECTORY;
 
 const renderer = new BasicCubeRenderer(3, 3, 3, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
 
 const solvedState = new State(cubies);
 
 class Puzzle3x3Cubix extends Puzzle {
+    static displayName = "3×3 Cubix Tube";
+
     constructor(state) {
         super(moves, renderer, solvedState, state);
     }

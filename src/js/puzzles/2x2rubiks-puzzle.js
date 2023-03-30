@@ -27,13 +27,15 @@ const imageTitles = [
     'bkk', 'kkb', 'kbk', 'gkk', 'kkg', 'kgk'
 ];
 
-const imageDirectory = 'graphics/rubiks';
+const imageDirectory = process.env.RUBIKS_IMG_DIRECTORY;
 
 const renderer = new BasicCubeRenderer(2, 2, 2, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
 
 const solvedState = new State(cubies);
 
 class Puzzle2x2Rubiks extends Puzzle {
+    static displayName = "2×2 Rubiks Cube";
+
     constructor(state) {
         super(moves, renderer, solvedState, state);
     }
@@ -48,7 +50,7 @@ class Puzzle2x2Rubiks extends Puzzle {
     }
 
     solve(callback) {
-        const worker = new Worker("./worker.js");
+        const worker = new Worker(process.env.WORKER_PATH);
         worker.onmessage = function (e) {
             worker.terminate();
             callback(e.data);

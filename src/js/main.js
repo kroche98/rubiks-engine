@@ -24,67 +24,109 @@ function scrambleAndRerender() {
     rerender();
 }
 
-function switchPuzzle(puzzleType) {
-    puzzle = new puzzleType();
-
-    document.getElementById('solution-div').textContent = '';
-
-    const buttonDiv = document.getElementById('button-div');
-
-    while (buttonDiv.firstChild) {
-        buttonDiv.removeChild(buttonDiv.firstChild);
-    }
-    
-    for (let moveName of Object.keys(puzzle.moveFunctions)) {
-        const moveButton = document.createElement('button');
-        moveButton.onclick = () => moveAndRerender(moveName);
-        const moveButtonText = document.createTextNode(moveName);
-        moveButton.appendChild(moveButtonText);
-        buttonDiv.appendChild(moveButton);
-    }
-    
-    if (puzzle.scramble) {
+class ButtonController {
+    placeScrambleButton(cssClasses) {
         const scrambleButton = document.createElement('button');
+        for (let cssClass of cssClasses) {
+            scrambleButton.classList.add(cssClass);
+        }
         scrambleButton.onclick = () => scrambleAndRerender();
         const scrambleButtonText = document.createTextNode('Scramble');
         scrambleButton.appendChild(scrambleButtonText);
-        buttonDiv.appendChild(scrambleButton);
+        document.getElementById('scramble-button-container').appendChild(scrambleButton);
     }
-    
-    if (puzzle.solve) {
+
+    placeSolveButton(cssClasses) {
         const solveButton = document.createElement('button');
+        for (let cssClass of cssClasses) {
+            solveButton.classList.add(cssClass);
+        }
         solveButton.onclick = function() {
-            document.getElementById('solution-div').textContent = 'Solution: computing...';
+            document.getElementById('solution-div').textContent = "Solution: computing...";
             const callback = (solution) => document.getElementById('solution-div').textContent = `Solution: ${solution}`;
             puzzle.solve(callback);
         }
         const solveButtonText = document.createTextNode('Solve');
         solveButton.appendChild(solveButtonText);
-        buttonDiv.appendChild(solveButton);
+        document.getElementById('solve-button-container').appendChild(solveButton);
     }
+
+    placePuzzleSelectionButtons(cssClasses, puzzles) {
+        for (let i=0; i<puzzles.length; i++) {
+            const button = document.createElement('button');
+            for (let cssClass of cssClasses) {
+                button.classList.add(cssClass);
+            }
+            button.onclick = () => switchPuzzle(puzzles[i]);
+            const buttonText = document.createTextNode(puzzles[i].displayName);
+            button.appendChild(buttonText);
+            document.getElementById('puzzle-selector-div').appendChild(button);
+        }
+    }
+
+    updatePuzzleSelectionButtonsState(selection) {
+        for (let child of document.getElementById('puzzle-selector-div').children) {
+            if (child.textContent == selection) {
+                child.classList.add('current-selection');
+            } else {
+                child.classList.remove('current-selection');
+            }
+        }
+    }
+
+    placeMoveButtons(cssClasses, puzzle) {
+        const moveButtonContainer = document.getElementById('move-button-container');
+        for (let moveName of Object.keys(puzzle.moveFunctions)) {
+            const moveButton = document.createElement('button');
+            for (let cssClass of cssClasses) {
+                moveButton.classList.add(cssClass);
+            }
+            moveButton.onclick = () => moveAndRerender(moveName);
+            const moveButtonText = document.createTextNode(moveName);
+            moveButton.appendChild(moveButtonText);
+            moveButtonContainer.appendChild(moveButton);
+        }
+    }
+
+    clearVariantSpecificButtons() {
+        const moveButtonContainer = document.getElementById('move-button-container');
+        while (moveButtonContainer.firstChild) {
+            moveButtonContainer.removeChild(moveButtonContainer.firstChild);
+        }
+
+        const scrambleButtonContainer = document.getElementById('scramble-button-container');
+        while (scrambleButtonContainer.firstChild) {
+            scrambleButtonContainer.removeChild(scrambleButtonContainer.firstChild);
+        }
+
+        const solveButtonContainer = document.getElementById('solve-button-container');
+        while (solveButtonContainer.firstChild) {
+            solveButtonContainer.removeChild(solveButtonContainer.firstChild);
+        }
+    }
+}
+
+const buttonController = new ButtonController();
+
+function switchPuzzle(puzzleType) {
+    puzzle = new puzzleType();
+
+    document.getElementById('solution-div').textContent = '';
+
+    buttonController.clearVariantSpecificButtons();
+    buttonController.placeMoveButtons(['plain-button', 'rubiks-move-button'], puzzle);
+    if (puzzle.scramble) {
+        buttonController.placeScrambleButton(['plain-button']);
+    }
+    if (puzzle.solve) {
+        buttonController.placeSolveButton(['plain-button']);
+    }
+    buttonController.updatePuzzleSelectionButtonsState(puzzleType.displayName);
 
     rerender();
 }
 
-const puzzleSelectorDiv = document.getElementById('puzzle-selector-div');
-
-const button3x3Rubiks = document.createElement('button');
-button3x3Rubiks.onclick = () => switchPuzzle(Puzzle3x3Rubiks);
-const button3x3RubiksText = document.createTextNode("3x3 Rubiks Cube");
-button3x3Rubiks.appendChild(button3x3RubiksText);
-puzzleSelectorDiv.appendChild(button3x3Rubiks);
-
-const button2x2Rubiks = document.createElement('button');
-button2x2Rubiks.onclick = () => switchPuzzle(Puzzle2x2Rubiks);
-const button2x2RubiksText = document.createTextNode("2x2 Rubiks Cube");
-button2x2Rubiks.appendChild(button2x2RubiksText);
-puzzleSelectorDiv.appendChild(button2x2Rubiks);
-
-const button3x3Cubix = document.createElement('button');
-button3x3Cubix.onclick = () => switchPuzzle(Puzzle3x3Cubix);
-const button3x3CubixText = document.createTextNode("3x3 Cubix Tube");
-button3x3Cubix.appendChild(button3x3CubixText);
-puzzleSelectorDiv.appendChild(button3x3Cubix);
+buttonController.placePuzzleSelectionButtons(['plain-button'], [Puzzle3x3Rubiks, Puzzle2x2Rubiks, Puzzle3x3Cubix])
 
 function main() {
     switchPuzzle(Puzzle3x3Rubiks);

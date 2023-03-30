@@ -45,13 +45,15 @@ const imageTitles = [
     'bkk', 'kkb', 'kbk', 'gkk', 'kkg', 'kgk'
 ];
 
-const imageDirectory = 'graphics/rubiks';
+const imageDirectory = process.env.RUBIKS_IMG_DIRECTORY;
 
 const renderer = new BasicCubeRenderer(3, 3, 3, coordsToCubicle, imageDirectory, imageTitles, imageLookup);
 
 const solvedState = new State(cubies);
 
 class Puzzle3x3Rubiks extends Puzzle {
+    static displayName = "3×3 Rubiks Cube";
+
     constructor(state) {
         super(moves, renderer, solvedState, state);
     }

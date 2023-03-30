@@ -4,12 +4,30 @@
 <head>
     <meta charset="utf-8">
     <title>Eagle's Rubiks Cube Engine</title>
+    <style>
+        .plain-button {
+            text-transform: uppercase;
+            border: 0;
+            padding: 6px;
+        }
+        .plain-button.rubiks-move-button {
+            text-transform: none;
+            width: 36px;
+        }
+        .plain-button.current-selection {
+            background-color: #616161;
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div id="puzzle-selector-div"></div>
     <canvas id="canvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
-    <div id="button-div"></div>
+    <div id="move-button-container"></div>
+    <div id="scramble-button-container"></div>
+    <div id="solve-button-container"></div>
     <div id="solution-div"></div>
-    <script src="main.js"></script>
+    <script src="rubiksMain.js"></script>
 </body>
 </html>
